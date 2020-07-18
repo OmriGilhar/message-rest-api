@@ -7,6 +7,12 @@ app = Flask(__name__)
 
 
 def create_db_file():
+    """
+
+
+    :rtype: str
+    :return:
+    """
     return os.path.join(tempfile.gettempdir(), "temp.db")
 
 

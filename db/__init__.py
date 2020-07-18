@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from flask import g, current_app
 
@@ -7,9 +8,10 @@ def init_db():
     # with app.open_resource('schema.sql', mode='r') as f:
     #     db.cursor().executescript(f.read())
     try:
-        db.execute('''CREATE TABLE message( id INTEGER PRIMARY KEY,
-         sender text, receiver text, message text, subject text, 
-         date date, unread INTEGER)''')
+        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                               'db.sql')) as f:
+            sql = f.read()  # watch out for built-in `str`
+            db.executescript(sql)
     except sqlite3.OperationalError as oe:
         # TODO: check for return code
         pass
