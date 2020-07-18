@@ -1,7 +1,7 @@
 import pytest
 from db import init_db
 import tempfile
-from app.main.main import app
+from app.main.app import app
 import os
 
 

@@ -56,11 +56,12 @@ def login():
     user = db.execute(
         'SELECT * FROM users WHERE user_name = ?', (username,)
     ).fetchone()
+
+    if not user:
+        return make_response(jsonify('Incorrect username.'), 400)
     user = UserEntry(*user)
 
-    if user is None:
-        error = 'Incorrect username.'
-    elif not check_password_hash(user.password, password):
+    if not check_password_hash(user.password, password):
         error = 'Incorrect password.'
 
     if error is None:

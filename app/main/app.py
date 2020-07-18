@@ -16,10 +16,12 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 def create_db_file():
     """
 
-
     :rtype: str
     :return:
     """
+    temp_db_path = os.path.join(tempfile.gettempdir(), "temp.db")
+    if os.path.exists(temp_db_path):
+        os.remove(temp_db_path)
     return os.path.join(tempfile.gettempdir(), "temp.db")
 
 

@@ -76,7 +76,7 @@ class MessageStore(AbstractStore):
         if not message:
             raise MessageStoreError(MessageStoreError.NOT_FOUND)
         del_query_db('DELETE FROM message WHERE id == {0}'.format(message_id))
-        return message
+        return message[0]
 
     def load_by_id(self, message_id):
         """
