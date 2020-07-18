@@ -6,6 +6,16 @@ import tempfile
 app = Flask(__name__)
 
 
+def create_db_file():
+    return os.path.join(tempfile.gettempdir(), "temp.db")
+
+
+db_path = create_db_file()
+app.config['DATABASE'] = db_path
+with app.app_context():
+    init_db()
+
+
 # Post Create message
 @app.route('/messages/new', methods=['GET', 'POST'])
 def write_message():
@@ -38,13 +48,5 @@ def close_connection(exception):
         db.close()
 
 
-def create_db_file():
-    return os.path.join(tempfile.gettempdir(), "temp.db")
-
-
 if __name__ == "__main__":
-    db_path = create_db_file()
-    app.config['DATABASE'] = db_path
-    with app.app_context():
-        init_db()
     app.run(debug=True, threaded=True, port=5000)
