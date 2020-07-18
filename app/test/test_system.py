@@ -2,7 +2,19 @@ import pytest
 from db import init_db
 import tempfile
 from app.main.main import app
+
 import os
+
+NAME_1 = 'DummySender1'
+NAME_2 = 'DummySender2'
+USER_1_JSON = {
+    "username": NAME_1,
+    "password": "asasdaNKJABDS"
+}
+USER_2_JSON = {
+    "username": NAME_2,
+    "password": "83hf83hf8"
+}
 
 
 @pytest.fixture(scope='function')
@@ -20,24 +32,17 @@ def client():
 
 
 @pytest.fixture(scope='function')
-def create_message(client):
-    name_1 = 'DummySender1'
-    name_2 = 'DummySender2'
-    user_1_json = {
-        "user_name": name_1,
-        "password": "asasdaNKJABDS"
-    }
+def create_users(client):
+    client.post('auth/register', json=USER_1_JSON).get_json()
+    client.post('auth/register', json=USER_2_JSON).get_json()
+    return USER_1_JSON, USER_2_JSON
 
-    user_2_json = {
-        "user_name": name_2,
-        "password": "83hf83hf8"
-    }
-    client.post('auth/register', json=user_1_json)
-    client.post('auth/register', json=user_2_json)
 
+@pytest.fixture(scope='function')
+def create_message(client, create_users):
     test_json = {
-        "sender": name_1,
-        "receiver": name_2,
+        "sender": create_users[0]['username'],
+        "receiver": create_users[1]['username'],
         "message": "This is a test message",
         "subject": "Test Message"
     }
@@ -47,9 +52,15 @@ def create_message(client):
     return test_json, returned_json
 
 
-def test_post_valid_message(create_message):
-    """Start with a blank database."""
+@pytest.fixture(scope='function')
+def login_user_1(client):
+    session = client.post('auth/login', json=USER_2_JSON)
+    cred = session.headers[3][1].replace('session=', '')
+    cred = cred.replace("; HttpOnly; Path=/", '')
+    client.set_cookie('localhost', 'USER', cred)
 
+
+def test_post_valid_message(create_message):
     test_json, returned_json = create_message
     assert (
         'creation_date' in returned_json
@@ -61,10 +72,9 @@ def test_post_valid_message(create_message):
     assert returned_json == test_json
 
 
-def test_get_message_by_valid_user(client, create_message):
-    """Start with a blank database."""
+def test_get_message_by_valid_user(client, create_message, login_user_1):
     test_json, returned_json = create_message
-    rv = client.get('/messages/Dummy%20Receiver')
+    rv = client.get('/messages')
     returned_json = rv.json[0]
     assert 'creation_date' in returned_json and returned_json[
         'creation_date'] != ''
@@ -74,10 +84,10 @@ def test_get_message_by_valid_user(client, create_message):
     assert returned_json == test_json
 
 
-def test_get_all_unread_message_by_valid_user(client, create_message):
-    """Start with a blank database."""
+def test_get_all_unread_message_by_valid_user(client, create_users,
+                                              create_message, login_user_1):
     test_json, returned_json = create_message
-    rv = client.get('/messages/Dummy%20Receiver?unread=true')
+    rv = client.get('/messages?unread=true')
     returned_json = rv.json[0]
     assert 'creation_date' in returned_json and returned_json[
         'creation_date'] != ''
@@ -90,8 +100,6 @@ def test_get_all_unread_message_by_valid_user(client, create_message):
 
 
 def test_get_message_by_valid_message_id(client, create_message):
-    """Start with a blank database."""
-
     test_json, returned_json = create_message
     rv = client.get('/message/{0}'.format(returned_json['uid']))
     returned_message = rv.json[0]
@@ -109,7 +117,7 @@ def test_delete_message_by_valid_message_id(client, create_message):
 
     test_json, returned_json = create_message
     rv = client.delete('/message/{0}'.format(returned_json['uid']))
-    returned_message = rv.json[0]
+    returned_message = rv.json
     assert 'creation_date' in returned_message and returned_message[
         'creation_date'] != ''
     del returned_message['creation_date']
