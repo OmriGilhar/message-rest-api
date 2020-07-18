@@ -1,9 +1,5 @@
-import functools
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for,
-    jsonify, make_response)
+from flask import Blueprint, request, session, jsonify, make_response
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from db import get_db, UserEntry
 
 
@@ -12,6 +8,12 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=['POST'])
 def register():
+    """
+    Register a user to the application
+
+    :rtype: flask.wrappers.Response
+    :return: Registration status
+    """
     account_json = request.get_json()
     username = account_json.get('username', None)
     password = account_json.get('password', None)
@@ -40,6 +42,12 @@ def register():
 
 @bp.route('/login', methods=['POST'])
 def login():
+    """
+    Login user and open a session with the user ID and name.
+
+    :rtype: flask.wrappers.Response
+    :return: Login status and a session cookie.
+    """
     account_json = request.get_json()
     username = account_json.get('username', None)
     password = account_json.get('password', None)

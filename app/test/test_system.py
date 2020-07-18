@@ -21,9 +21,23 @@ def client():
 
 @pytest.fixture(scope='function')
 def create_message(client):
+    name_1 = 'DummySender1'
+    name_2 = 'DummySender2'
+    user_1_json = {
+        "user_name": name_1,
+        "password": "asasdaNKJABDS"
+    }
+
+    user_2_json = {
+        "user_name": name_2,
+        "password": "83hf83hf8"
+    }
+    x = client.post('auth/register', json=user_1_json)
+    client.post('auth/register', json=user_2_json)
+
     test_json = {
-        "sender": "Dummy Sender",
-        "receiver": "Dummy Receiver",
+        "sender": name_1,
+        "receiver": name_2,
         "message": "This is a test message",
         "subject": "Test Message"
     }
@@ -33,12 +47,14 @@ def create_message(client):
     return test_json, returned_json
 
 
-def test_post_valid_message(client, create_message):
+def test_post_valid_message(create_message):
     """Start with a blank database."""
 
     test_json, returned_json = create_message
-    assert 'creation_date' in returned_json and returned_json[
-        'creation_date'] != ''
+    assert (
+        'creation_date' in returned_json
+        and returned_json['creation_date'] != ''
+    )
     del returned_json['creation_date']
     assert 'uid' in returned_json and isinstance(returned_json['uid'], int)
     del returned_json['uid']

@@ -3,20 +3,35 @@ import logging
 import uuid
 
 
-class MessageValidationError(Exception):
-    pass
+class MessageStoreError(Exception):
+    INVALID = 'One of the fields is invalid.'
+    NOT_FOUND = 'Message not found.'
+    NO_UNREAD_MESSAGES = 'No unread messages found.'
+
+    def __init__(self, error):
+        self.error = error
+        super(self.__class__)
 
 
 class Message:
-    def __init__(self, sender, receiver, message, subject, unread=0,
-                 id_num=None):
+    """
+    This class representing a message.
+    """
+    def __init__(self, sender, receiver, message, subject, unread=0):
+        """
+        Class initiator.
+
+        :param str sender: Sender name
+        :param str receiver: receiver name
+        :param str message: message name
+        :param str subject: subject name
+        :param int unread: unread flag
+        :param int id_num: unique id number
+        """
         if not self.validate_inputs(sender, receiver, message, subject):
             # TODO: Handle Error
-            raise MessageValidationError("One of the fields is invalid.")
-        if id_num:
-            self.__uid = id_num
-        else:
-            self.__uid = uuid.uuid4().int >> 96
+            raise MessageStoreError(MessageStoreError.INVALID)
+        self.__uid = uuid.uuid4().int >> 96
         self.__sender = sender
         self.__receiver = receiver
         self.__message = message
@@ -110,12 +125,13 @@ class Message:
     @classmethod
     def from_tuple(cls, json_tuple):
         """
-        Alternate constructor converting dict into a Message obj
+        Alternate constructor converting tuple into a Message obj
 
         :param tuple json_tuple: JSON tuple containing message content.
         :rtype: Message
         :return: A message object representing the given JSON dict.
         """
-        self = cls(json_tuple[1], json_tuple[2], json_tuple[3],
-                   json_tuple[4], json_tuple[6], json_tuple[0])
-        return self
+        message = cls(json_tuple[1], json_tuple[2], json_tuple[3],
+                      json_tuple[4], json_tuple[6])
+        message.__uid = json_tuple[0]
+        return message
