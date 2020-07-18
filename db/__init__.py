@@ -1,29 +1,25 @@
 import sqlite3
-from flask import g
-
-DATABASE = ':memory:'
+from flask import g, current_app
 
 
-def init_db(app):
-    with app.app_context():
-        db = get_db()
-        # with app.open_resource('schema.sql', mode='r') as f:
-        #     db.cursor().executescript(f.read())
-        try:
-            db.execute('''CREATE TABLE message( id INTEGER PRIMARY KEY,
-             sender text, receiver text, message text, subject text, 
-             date date, unread INTEGER)''')
-        except sqlite3.OperationalError as oe:
-            # TODO: check for return code
-            pass
-        db.commit()
+def init_db():
+    db = get_db()
+    # with app.open_resource('schema.sql', mode='r') as f:
+    #     db.cursor().executescript(f.read())
+    try:
+        db.execute('''CREATE TABLE message( id INTEGER PRIMARY KEY,
+         sender text, receiver text, message text, subject text, 
+         date date, unread INTEGER)''')
+    except sqlite3.OperationalError as oe:
+        # TODO: check for return code
+        pass
+    db.commit()
 
 
 def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
+    if 'db' not in g:
+        g.db = sqlite3.connect(current_app.config['DATABASE'])
+    return g.db
 
 
 def query_db(query, args=(), one=False):

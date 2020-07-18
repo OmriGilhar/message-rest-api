@@ -1,7 +1,8 @@
 from db import init_db
 from flask import Flask, g, request
 from app.logic import message_service as ms
-
+import os
+import tempfile
 app = Flask(__name__)
 
 
@@ -37,6 +38,13 @@ def close_connection(exception):
         db.close()
 
 
+def create_db_file():
+    return os.path.join(tempfile.gettempdir(), "temp.db")
+
+
 if __name__ == "__main__":
-    init_db(app)
+    db_path = create_db_file()
+    app.config['DATABASE'] = db_path
+    with app.app_context():
+        init_db()
     app.run(debug=True, threaded=True, port=5000)
