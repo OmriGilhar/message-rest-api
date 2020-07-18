@@ -5,6 +5,7 @@ from app.main import create_app
 from app.logic import message_service as ms
 from app.logic import user_service as us
 import os
+import logging
 import tempfile
 
 app = create_app(__name__)
@@ -70,6 +71,7 @@ def get_message_auth():
     # Check if user was deleted during the session.
     if us.query_user(session['user_name']):
         unread = request.args.get('unread', 'false')
+        print('unread value: {0}'.format(unread))
         try:
             return jsonify(ms.get_message_by_receiver(session['user_name'],
                                                       unread))
