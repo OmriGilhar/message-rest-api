@@ -1,6 +1,9 @@
 import os
 import sqlite3
 from flask import g, current_app
+from collections import namedtuple
+
+UserEntry = namedtuple('UserEntry', 'user_id,user_name,password')
 
 
 def init_db():

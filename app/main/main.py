@@ -1,9 +1,13 @@
 from db import init_db
-from flask import Flask, g, request
+from flask import g, request, session
+from app.main import create_app
 from app.logic import message_service as ms
 import os
 import tempfile
-app = Flask(__name__)
+
+app = create_app(__name__)
+# TODO: generate 
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
 def create_db_file():
@@ -36,6 +40,13 @@ def get_message(receiver):
     if request.method == 'GET':
         unread = request.args.get('unread')
         return ms.get_message_by_receiver(receiver, unread)
+
+
+# Auth Get all messages from a specific user
+@app.route('/messages', methods=['GET'])
+def get_message_auth():
+    unread = request.args.get('unread')
+    return ms.get_message_by_receiver(session['user_name'], unread)
 
 
 # get and delete

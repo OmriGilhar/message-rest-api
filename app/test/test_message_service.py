@@ -1,5 +1,5 @@
 import pytest
-from db import get_db, init_db
+from db import init_db
 import tempfile
 from app.main.main import app
 import os
