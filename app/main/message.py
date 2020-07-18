@@ -28,7 +28,6 @@ class Message:
         :param int unread: unread flag
         """
         if not self.validate_inputs(sender, receiver, message, subject):
-            # TODO: Handle Error
             raise MessageStoreError(MessageStoreError.INVALID)
         self.__uid = uuid.uuid4().int >> 96
         self.__sender = sender
