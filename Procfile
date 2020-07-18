@@ -1,1 +1,1 @@
-web: gunicorn herolu-rest-test:herolu-rest-test
+web: gunicorn herolu-rest-test:app
