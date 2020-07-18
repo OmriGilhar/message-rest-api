@@ -70,4 +70,3 @@ def test_to_json(json_dict, expected):
     assert message.receiver == expected.receiver
     assert message.message == expected.message
     assert message.subject == expected.subject
-

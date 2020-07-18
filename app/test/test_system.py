@@ -32,7 +32,7 @@ def create_message(client):
         "user_name": name_2,
         "password": "83hf83hf8"
     }
-    x = client.post('auth/register', json=user_1_json)
+    client.post('auth/register', json=user_1_json)
     client.post('auth/register', json=user_2_json)
 
     test_json = {
@@ -66,7 +66,8 @@ def test_get_message_by_valid_user(client, create_message):
     test_json, returned_json = create_message
     rv = client.get('/messages/Dummy%20Receiver')
     returned_json = rv.json[0]
-    assert 'creation_date' in returned_json and returned_json['creation_date'] != ''
+    assert 'creation_date' in returned_json and returned_json[
+        'creation_date'] != ''
     del returned_json['creation_date']
     assert 'uid' in returned_json and isinstance(returned_json['uid'], int)
     del returned_json['uid']
@@ -97,7 +98,8 @@ def test_get_message_by_valid_message_id(client, create_message):
     assert 'creation_date' in returned_message and returned_message[
         'creation_date'] != ''
     del returned_message['creation_date']
-    assert 'uid' in returned_message and isinstance(returned_message['uid'], int)
+    assert 'uid' in returned_message and isinstance(returned_message['uid'],
+                                                    int)
     del returned_message['uid']
     assert returned_message == test_json
 
@@ -111,7 +113,7 @@ def test_delete_message_by_valid_message_id(client, create_message):
     assert 'creation_date' in returned_message and returned_message[
         'creation_date'] != ''
     del returned_message['creation_date']
-    assert 'uid' in returned_message and isinstance(returned_message['uid'], int)
+    assert 'uid' in returned_message and isinstance(returned_message['uid'],
+                                                    int)
     del returned_message['uid']
     assert returned_message == test_json
-

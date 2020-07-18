@@ -26,7 +26,6 @@ class Message:
         :param str message: message name
         :param str subject: subject name
         :param int unread: unread flag
-        :param int id_num: unique id number
         """
         if not self.validate_inputs(sender, receiver, message, subject):
             # TODO: Handle Error

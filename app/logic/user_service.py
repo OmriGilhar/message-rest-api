@@ -29,4 +29,3 @@ def validate_users(json_dict):
     if sender_name and receiver_name:
         return query_user(sender_name) and query_user(receiver_name)
     return False
-

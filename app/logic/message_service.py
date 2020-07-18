@@ -1,5 +1,3 @@
-from flask import jsonify, make_response
-
 from app.main.message import Message, MessageStoreError
 from db.message_store import MessageStore
 
