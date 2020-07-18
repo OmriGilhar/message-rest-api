@@ -1,1 +1,1 @@
-web: gunicorn --bind 0.0.0.0:$PORT herolu-rest-test:app
+web: gunicorn app.main.main:app
