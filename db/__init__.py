@@ -1,8 +1,7 @@
 import sqlite3
 from flask import g
-import os
 
-DATABASE = os.path.normpath('./../messages.db')
+DATABASE = ':memory:'
 
 
 def init_db(app):
