@@ -39,4 +39,4 @@ def close_connection(exception):
 
 if __name__ == "__main__":
     init_db(app)
-    app.run(threaded=True, port=5000)
+    app.run(debug=True, threaded=True, port=5000)
