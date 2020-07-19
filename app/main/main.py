@@ -17,10 +17,9 @@ def create_db_file():
     :rtype: str
     :return:
     """
-    temp_db_path = os.path.join(tempfile.gettempdir(), "temp.db")
-    if os.path.exists(temp_db_path):
-        os.remove(temp_db_path)
-    return os.path.join(tempfile.gettempdir(), "temp.db")
+    temp_db_path = tempfile.NamedTemporaryFile().name
+    app.logger.info('Database path: {0}'.format(temp_db_path))
+    return temp_db_path
 
 
 db_path = create_db_file()
