@@ -102,6 +102,8 @@ class MessageStore(AbstractStore):
         query = 'SELECT * FROM message WHERE receiver == "{0}"'.format(
             receiver)
         messages = self.load(query)
+        if not messages:
+            raise MessageStoreError(MessageStoreError.NO_NEW_MESSAGES)
         if unread:
             messages = [
                 message for message in messages if not message.get('unread')

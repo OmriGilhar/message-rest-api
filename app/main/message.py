@@ -7,6 +7,7 @@ class MessageStoreError(Exception):
     INVALID = 'One of the fields is invalid.'
     NOT_FOUND = 'Message not found.'
     NO_UNREAD_MESSAGES = 'No unread messages found.'
+    NO_NEW_MESSAGES = 'There is no new messages.'
 
     def __init__(self, error):
         self.error = error

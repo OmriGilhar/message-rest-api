@@ -77,6 +77,9 @@ def get_message_auth():
             if e.error == MessageStoreError.NO_UNREAD_MESSAGES:
                 return make_response(jsonify(
                     MessageStoreError.NO_UNREAD_MESSAGES), 200)
+            elif e.error == MessageStoreError.NO_NEW_MESSAGES:
+                return make_response(jsonify(
+                    MessageStoreError.NO_NEW_MESSAGES), 200)
     return make_response(jsonify("Receiver is not found."), 404)
 
 
